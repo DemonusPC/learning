@@ -56,6 +56,7 @@ for point in s_data:
     plot_data_y.append(point[1])
 
 line = np.linspace(9.5,0,10)
+line = np.linspace(-1.13,)
 
 plt.scatter(plot_data_x, plot_data_y)
 plt.plot(line)
