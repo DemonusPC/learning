@@ -5,54 +5,13 @@ from random import randint
 import matplotlib.pyplot as plt
 import numpy as np
 
-# AND GATE
-# a b bias output
-# 0 0 1    0
-# 0 1 1    0
-# 1 0 1    0
-# 1 1 1    1
 
-and_data = [[0,0,1],[0,1,1],[1,0,1],[1,1,1]]
-and_output = [0.0,0.0,0.0,1.0]
-
-# OR GATE
-# a b bias output
-# 0 0 1    0
-# 0 1 1    1
-# 1 0 1    1
-# 1 1 1    1
-
-or_data = [[0,0,1],[0,1,1],[1,0,1],[1,1,1]]
-or_output = [0,1,1,1]
-
-
-# NOT GATE
-# a bias output
-# 0 1    1
-# 1 1    0
-
-not_data = [[0,1],[1,1]]
-not_output = [1,0] 
-
-# sample 
-# x1 x2 bias out
-# 1.0 1.0 1 1 \
-# 9.4 6.4 1 -1 \
-# 2.5 2.1 1 1 \
-# 8.0 7.7 1 -1 \
-# 0.5 2.2 1 1 \
-# 7.9 8.4 1 -1 \
-# 7.0 7.0 1 -1 
-# 2.8 0.8 1 1
-# 1.2 3.0 1 1
-# 7.8 6.1 1 -1
-s_data = [[1.0, 1.0, 1.0], [9.4,6.4,1.0], [2.5,2.1,1.0], [8.0,7.7,1.0], [0.5,2.2,1.0], [7.9, 8.4, 1.0], [7.0, 7.0, 1.0] , [2.8,0.8,1.0],[1.2,3.0,1.0],[7.8,6.1,1.0]]
-s_output = [1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0,1.0,1.0,0.0]
+data = data_importer.read_file("./data/sample.csv")
 
 plot_data_x = []
 plot_data_y = []
 
-for point in s_data:
+for point in data.inputs:
     plot_data_x.append(point[0])
     plot_data_y.append(point[1])
 
@@ -118,16 +77,8 @@ def final_check(perceptron, inputs):
     plt.scatter(c1x, c1y, color='blue')
     plt.show()
 
-
-
-
-# learning_graph.scatter(plot_data_x, plot_data_y)
-# learning_graph.plot(line)
-# plot_standard()
 error_graph.set_ylim([0,20])
 learning_graph.axis([0.0, 10.0, 0.0, 10.0])
-
-
 
 plt.ion()
 plt.show()
@@ -171,12 +122,13 @@ def most_of_ts(inputs, outputs):
 
 
 
+# learning
+# this is a single perceptron learning routine
+
 def learning(inputs, outputs, function, derivative_function, input_function):
     p = perceptron.Perceptron(function) 
     learning_rate = 1
     global_error = 20
-    previous_weights = [p.get_weights()]
-    previous_local_error = 20
     iteration = 0
 
     while global_error != 0:
@@ -194,7 +146,6 @@ def learning(inputs, outputs, function, derivative_function, input_function):
             results.append(result)
             local_error = output - result
             pW = ""
-            # print(p.get_weights())
             if result != output:
                 # deltaWi = a * ( y - h ) * xi
                 # a = learning rate
@@ -202,17 +153,13 @@ def learning(inputs, outputs, function, derivative_function, input_function):
                 # h is the actual output
                 # xi is the input
                 new_w = [y + (learning_rate * x * local_error * derivative_function(before_activation)) for x,y in zip(input, p.get_weights())]
-                # new_w = [round(y +round((learning_rate * x * local_error), 3), 3) for x,y in zip(inp, p.get_weights())]
-                # print(new_w)
                 pW = new_w
                 p.setWeights(new_w)
-                previous_local_error = local_error
                 wrong += 1
             printRound(input, result, output, pW)
             i += 1
 
         accuracy = ((i-wrong)/i)*100
-
         
         print("Accuracy: " + str(accuracy))
         overall_error = calculate_error(outputs, results)
@@ -226,8 +173,6 @@ def learning(inputs, outputs, function, derivative_function, input_function):
 
         print("learning rate: " + str(learning_rate))
 
-        # global_error = overall_error
-
         error_list.append(overall_error)
         global_error_list.append(global_error)
 
@@ -236,17 +181,9 @@ def learning(inputs, outputs, function, derivative_function, input_function):
 
         if len(global_error_list) > 20:
             global_error_list.pop(0)
-        
-        # weights = p.get_weights()
-        # m = calculate_gradient(weights[1], weights[0], weights[2])
-        # w, q = produce_points(m, weights[2])
-        # line = np.linspace(w,q)
 
         learning_graph.clear()
         plot_check(p, inputs)
-        # learning_graph.plot(line)
-        # learning_graph.set_xlim([0,10])
-        # learning_graph.set_ylim([0,10])
 
         error_graph.clear()
         error_graph.plot(error_list)
@@ -300,42 +237,8 @@ def produce_points(gradient, bias):
     
     return first,second
 
-
-
-
-# t = learning(or_data,or_output, perceptron.simple)
-# t = learning(not_data,not_output)
-
-# p2 = perceptron.Perceptron(perceptron.sigmoid, [-1.13, -1.1, 10.9])
-
-
-# print(str(p2.run([0,0,1])) + " should 0")
-# print(str(p2.run([0,1,1])) + " should 1")
-# print(str(p2.run([1,0,1])) + " should 1")
-# print(str(p2.run([1,1,1])) + " should 1")
-
-# print(str(p2.run([0,1])))
-
-# print(str(p2.run([8.3,9.2,1])) + " should -1")
-
-
-# # and
-# t = learning(and_data,and_output, perceptron.sigmoid, perceptron.sigmoidDerivative)
-# p2 = perceptron.Perceptron(perceptron.sigmoid, t)
-# check_accuracy(p2, and_data, and_output)
-
-# s_data
-# t = learning(s_data,s_output, perceptron.sigmoid)
-# p2 = perceptron.Perceptron(perceptron.sigmoid, t)
-# check_accuracy(p2, s_data, s_output)
-
-data = data_importer.read_file("./data/sample.csv")
 t = learning(data.inputs,data.outputs, perceptron.sigmoid, perceptron.sigmoidDerivative, most_of_ts)
 p2 = perceptron.Perceptron(perceptron.sigmoid, t)
 check_accuracy(p2, data.inputs, data.outputs)
 
 print(p2.get_weights())
-
-
-
-
