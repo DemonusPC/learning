@@ -145,7 +145,7 @@ def check_accuracy(perceptron, data, expected_output):
     accuracy = (correct / len(s_output)) * 100
     print("Accuracy: " + str(accuracy))
 
-def learning(inputs, outputs, function, derivative_function, ):
+def learning(inputs, outputs, function, derivative_function):
     p = perceptron.Perceptron(function) 
     learning_rate = 1
     global_error = 20
