@@ -145,7 +145,20 @@ def check_accuracy(perceptron, data, expected_output):
     accuracy = (correct / len(s_output)) * 100
     print("Accuracy: " + str(accuracy))
 
-def learning(inputs, outputs, function, derivative_function):
+
+# input_functions
+# Generate an input and output pairs 
+def pick_one_at_random(inputs, outputs):
+    index = randint(0, len(inputs)-1)
+    input = [inputs[index]]
+    output = [outputs[index]]
+    return input,output
+
+def pass_training_set(inputs, outputs):
+    return inputs, outputs
+
+
+def learning(inputs, outputs, function, derivative_function, input_function):
     p = perceptron.Perceptron(function) 
     learning_rate = 1
     global_error = 20
@@ -153,33 +166,35 @@ def learning(inputs, outputs, function, derivative_function):
     previous_local_error = 20
     iteration = 0
 
-    while global_error != 0.5:
+    while global_error != 0:
         results = []
         i = 0
         wrong = 0
+        
+        # Get curated inputs
+        c_input, c_output = input_function(inputs, outputs)
 
-        for input in inputs:
-            inp,o = generate_input_pair(inputs, outputs)
-            result = p.run(inp)
-            before_activation = p.sum(inp)
+        for input, output in zip(c_input,c_output):
+            result = p.run(input)
+            before_activation = p.sum(input)
             results.append(result)
-            local_error = o - result
+            local_error = output - result
             pW = ""
             # print(p.get_weights())
-            if result != o:
+            if result != output:
                 # deltaWi = a * ( y - h ) * xi
                 # a = learning rate
                 # y is the desired output
                 # h is the actual output
                 # xi is the input
-                new_w = [y + (learning_rate * x * local_error * derivative_function(before_activation)) for x,y in zip(inp, p.get_weights())]
+                new_w = [y + (learning_rate * x * local_error * derivative_function(before_activation)) for x,y in zip(input, p.get_weights())]
                 # new_w = [round(y +round((learning_rate * x * local_error), 3), 3) for x,y in zip(inp, p.get_weights())]
                 # print(new_w)
                 pW = new_w
                 p.setWeights(new_w)
                 previous_local_error = local_error
                 wrong += 1
-            printRound(inp, result, o, pW)
+            printRound(input, result, output, pW)
             i += 1
 
         accuracy = ((i-wrong)/i)*100
@@ -301,7 +316,7 @@ def produce_points(gradient, bias):
 # check_accuracy(p2, s_data, s_output)
 
 data = data_importer.read_file("./data/sample.csv")
-t = learning(data.inputs,data.outputs, perceptron.sigmoid, perceptron.sigmoidDerivative)
+t = learning(data.inputs,data.outputs, perceptron.sigmoid, perceptron.sigmoidDerivative, pass_training_set)
 p2 = perceptron.Perceptron(perceptron.sigmoid, t)
 check_accuracy(p2, s_data, s_output)
 
