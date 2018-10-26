@@ -140,9 +140,11 @@ def check_accuracy(perceptron, data, expected_output):
         result = perceptron.run(inp)
         if(result == exp):
             correct += 1
-        print(str(result) + " = " + str(exp))
-
-    accuracy = (correct / len(s_output)) * 100
+            print(str(result) + " = " + str(exp) + " - " + u'\u2713')
+        else:
+            print(str(result) + " = " + str(exp) + " - x")
+    
+    accuracy = (correct / len(data)) * 100
     print("Accuracy: " + str(accuracy))
 
 
@@ -156,6 +158,17 @@ def pick_one_at_random(inputs, outputs):
 
 def pass_training_set(inputs, outputs):
     return inputs, outputs
+
+def pass_extended_ts(inputs, outputs):
+    inp = inputs + inputs + inputs
+    out = outputs + outputs + outputs
+    return inp, out
+
+def most_of_ts(inputs, outputs):
+    input_result = inputs[:5]
+    output_result = outputs[:5]
+    return input_result, output_result
+
 
 
 def learning(inputs, outputs, function, derivative_function, input_function):
@@ -174,6 +187,7 @@ def learning(inputs, outputs, function, derivative_function, input_function):
         # Get curated inputs
         c_input, c_output = input_function(inputs, outputs)
 
+        # loop through the inputs and run the 
         for input, output in zip(c_input,c_output):
             result = p.run(input)
             before_activation = p.sum(input)
@@ -316,9 +330,9 @@ def produce_points(gradient, bias):
 # check_accuracy(p2, s_data, s_output)
 
 data = data_importer.read_file("./data/sample.csv")
-t = learning(data.inputs,data.outputs, perceptron.sigmoid, perceptron.sigmoidDerivative, pass_training_set)
+t = learning(data.inputs,data.outputs, perceptron.sigmoid, perceptron.sigmoidDerivative, most_of_ts)
 p2 = perceptron.Perceptron(perceptron.sigmoid, t)
-check_accuracy(p2, s_data, s_output)
+check_accuracy(p2, data.inputs, data.outputs)
 
 print(p2.get_weights())
 
