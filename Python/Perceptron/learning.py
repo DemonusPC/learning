@@ -237,7 +237,7 @@ def produce_points(gradient, bias):
     
     return first,second
 
-t = learning(data.inputs,data.outputs, perceptron.sigmoid, perceptron.sigmoidDerivative, most_of_ts)
+t = learning(data.inputs,data.outputs, perceptron.sigmoid, perceptron.sigmoidDerivative, pass_extended_ts)
 p2 = perceptron.Perceptron(perceptron.sigmoid, t)
 check_accuracy(p2, data.inputs, data.outputs)
 
