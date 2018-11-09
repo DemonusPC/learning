@@ -5,6 +5,12 @@ def read_in_data():
     data = data_importer.read_file("./data/xor.csv")
     return data
 
+def calc_sk(weights, inputs):
+    result = 0
+    for w, a in zip(weights,inputs):
+        result = result + (w*a)
+    return result
+
 def delta_output(error, derivative, sk):
     delta = (error) * derivative(sk)
     return delta
@@ -73,15 +79,15 @@ output_set = d.outputs[0]
 # print(input_set)
 # print(output_set)
 
-p1 = perceptron.Perceptron(perceptron.sigmoid)
-p2 = perceptron.Perceptron(perceptron.sigmoid)
+p1 = perceptron.Perceptron(perceptron.sigmoid, weights=[0.4,0.3,0.9])
+p2 = perceptron.Perceptron(perceptron.sigmoid, weights=[0.8, -0.2, 0.5])
 hidden_nodes = [p1,p2]
 
 input_layer = Column(input_set)
 hidden_layer = Column(hidden_nodes)
 # print(input_layer)
 # print(hidden_layer)
-output_layer = Column([perceptron.Perceptron(perceptron.sigmoid)])
+output_layer = Column([perceptron.Perceptron(perceptron.sigmoid, weights=[-0.3, 0.1, 0.8])])
 out = Column([])
 
 input_layer.set_next(hidden_layer)
@@ -97,4 +103,11 @@ neural_network = [hidden_layer, output_layer]
 for layer in neural_network:
     layer.forward(run_neuron)
 
-print(out.get_inputs())
+
+result = out.get_inputs()[0]
+error = output_set - result
+
+sk = calc_sk(output_layer.get_nodes()[0].get_weights(), output_layer.get_inputs())
+
+delta_o = delta_output(error, perceptron.sigmoidDerivative, sk)
+print(delta_o)
