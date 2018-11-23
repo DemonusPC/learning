@@ -43,7 +43,7 @@ def read_file(path):
      for row in data_reader:
          output = float(row.pop())
          input_row = parse_row_to_float(row)
-         #add_bias(input_row)
+         # add_bias(input_row)
          inputs.append(input_row)
          outputs.append(output)
      result = Data(inputs, outputs, labels)
