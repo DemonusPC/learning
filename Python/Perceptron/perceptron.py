@@ -38,9 +38,7 @@ class Perceptron:
 
     def sum(self, input):
         s = 0
-        #print(s)
         for i, w in zip(input, self.weights):
-            # print (str(i) + " * " + str(w))
             s = s + (i * w)
         return s 
 
@@ -70,13 +68,13 @@ def x_simple(x):
     else:
         return -1
 
-w = [0,0,0]
-inp = [0,0,1]
+# w = [0,0,0]
+# inp = [0,0,1]
 
-p1 = Perceptron(simple)
-p1.setWeights(w)
-r = p1.run(inp)
-print(r)
+# p1 = Perceptron(simple)
+# p1.setWeights(w)
+# r = p1.run(inp)
+# print(r)
 
 
 
