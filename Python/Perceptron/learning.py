@@ -122,6 +122,21 @@ def most_of_ts(inputs, outputs):
     return input_result, output_result
 
 
+# p = perceptron
+# input the current input array
+# alpha = learning rate
+# derivative = the derivative of the activation function
+# before_activation = before activation values
+# error = the local resulting error
+def recalculate_weights(weights, input, alpha, derivative, before_activation, error):
+    # deltaWi = a * ( y - h ) * xi
+    # a = learning rate
+    # y is the desired output
+    # h is the actual output
+    # xi is the input
+    result = [y + (alpha * x * error * derivative(before_activation)) for x,y in zip(input, weights)]
+    return result
+                
 
 # learning
 # this is a single perceptron learning routine
@@ -153,7 +168,7 @@ def learning(inputs, outputs, function, derivative_function, input_function):
                 # y is the desired output
                 # h is the actual output
                 # xi is the input
-                new_w = [y + (learning_rate * x * local_error * derivative_function(before_activation)) for x,y in zip(input, p.get_weights())]
+                new_w = recalculate_weights(p.get_weights(), input, learning_rate,derivative_function, before_activation, local_error)
                 pW = new_w
                 p.setWeights(new_w)
                 wrong += 1
