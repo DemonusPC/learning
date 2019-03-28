@@ -92,7 +92,7 @@ class Column:
         for node in self.nodes:
             r = function(node, self.inputs)
             result.append(r)
-        # add_bias(result)
+        add_bias(result)
         self.next.set_inputs(inputs=result)
     
     def set_deltas(self, new_deltas):
@@ -119,7 +119,7 @@ class Column:
 # delta_o = delta_output(error, perceptron.sigmoidDerivative, sk)
 
 
-learning_rate = 5
+learning_rate = 2
 # deltaj = (yj - hj) * g'(Σk[ wk,j * ak ])
 def update_output_layer(layer, error):
     for node in layer.get_nodes():
@@ -165,10 +165,10 @@ output_set = d.outputs[0]
 input_layer = Column(input_set)
 
 # Create the hidden layer columns
-# p1 = perceptron.Perceptron(perceptron.sigmoid, weights=[0.4,0.3,0.9], id=4)
-# p2 = perceptron.Perceptron(perceptron.sigmoid, weights=[0.8, -0.2, 0.5], id= 5)
-p1 = perceptron.Perceptron(perceptron.sigmoid, weights=[1,1,1], id=4)
-p2 = perceptron.Perceptron(perceptron.sigmoid, weights=[0.2, -0.111, 0.32], id= 5)
+p1 = perceptron.Perceptron(perceptron.sigmoid, weights=[0.4,0.3,0.9], id=4)
+p2 = perceptron.Perceptron(perceptron.sigmoid, weights=[0.8, -0.2, 0.5], id= 5)
+# p1 = perceptron.Perceptron(perceptron.sigmoid, weights=[1,1,1], id=4)
+# p2 = perceptron.Perceptron(perceptron.sigmoid, weights=[0.2, -0.111, 0.32], id= 5)
 hidden_nodes = [p1,p2]
 hidden_layer = Column(hidden_nodes)
 
@@ -189,141 +189,140 @@ input_layer.forward(pass_forward)
 neural_network = [hidden_layer, output_layer]
 
 # Go forward in the neural network
-# for layer in neural_network:
-#     layer.forward(run_neuron)
+for layer in neural_network:
+    layer.forward(run_neuron)
 
-# # Get the results of the run
-# result = out.get_inputs()[0]
+# Get the results of the run
+result = out.get_inputs()[0]
 
-# # Calculate the error
-# error = output_set - result
+# Calculate the error
+error = output_set - result
 
-# print("Output: " + str(result) + " -> Error: " + str(error))
+print("Expected: %s, Outpu: %s , Error: %s" % (str(output_set), str(result), str(error)))
 
-# # for l in neural_network:
-# #     print(l)
+# for l in neural_network:
+#     print(l)
 
 
-# # print("_______________________")
-# # print("Reversed")
-# for index, layer in enumerate(reversed(neural_network)):
-#     if(index == 0):
-#         update_output_layer(layer,error)
-#         # print(layer)
-#     else:
-#         update_hidden_layer(layer)
-#         # print(layer)
+# print("_______________________")
+# print("Reversed")
+for index, layer in enumerate(reversed(neural_network)):
+    if(index == 0):
+        update_output_layer(layer,error)
+        print(layer)
+    else:
+        update_hidden_layer(layer)
+        print(layer)
 
 
 # input_functions
 # Generate an input and output pairs 
 
 
-# the graph
-plot_data_x = []
-plot_data_y = []
+# plot_data_x = []
+# plot_data_y = []
 
-for point in d.inputs:
-    plot_data_x.append(point[0])
-    plot_data_y.append(point[1])
+# for point in d.inputs:
+#     plot_data_x.append(point[0])
+#     plot_data_y.append(point[1])
 
-fig = plt.figure(figsize=(7,10))
-# learning_graph = fig.add_subplot(211)
-# learning_graph.set_title("Data and learning")
-error_graph = fig.add_subplot(211)
-error_graph.set_title("Global Error")
+# fig = plt.figure(figsize=(7,10))
+# # learning_graph = fig.add_subplot(211)
+# # learning_graph.set_title("Data and learning")
+# error_graph = fig.add_subplot(211)
+# error_graph.set_title("Global Error")
 
-error_list = [20]
-global_error_list = [20]
-error_graph.plot(error_list)
-error_graph.plot(global_error_list)
+# error_list = [20]
+# global_error_list = [20]
+# error_graph.plot(error_list)
+# error_graph.plot(global_error_list)
 
-error_graph.set_ylim([-10,10])
-# learning_graph.axis([0.0, 10.0, 0.0, 10.0])
-
-
-plt.ion()
-plt.show()
-
-def pick_one_at_random(inputs, outputs):
-    index = randint(0, len(inputs)-1)
-    input = [inputs[index]]
-    output = [outputs[index]]
-    return input,output[0]
+# error_graph.set_ylim([-10,10])
+# # learning_graph.axis([0.0, 10.0, 0.0, 10.0])
 
 
+# plt.ion()
+# plt.show()
 
-for l in neural_network:
-    print(l)
+# def pick_one_at_random(inputs, outputs):
+#     index = randint(0, len(inputs)-1)
+#     input = [inputs[index]]
+#     output = [outputs[index]]
+#     return input,output[0]
 
 
 
-print("===========================")
-
-global_error = 100
-err = 1000.0
-
-epoch = 0
-while (err != 0.0 or epoch < 2000):
-    # input_layer.forward(pass_forward)
-    # print(float(err))
-    i, o = pick_one_at_random(d.inputs, d.outputs)
-    # for i, o in zip(d.inputs, d.outputs):
-    # print(i)
-    # print(o)
-    for layer in neural_network:
-        layer.forward(run_neuron)
-
-    # Get the results of the run
-    result = out.get_inputs()[0]
-    # Calculate the error
-    err = o - result
-
-    print("Expected: %s, Outpu: %s , Error: %s" % (str(o), str(result), str(err)))
-
-    # for l in neural_network:
-    #     print(l)
+# for l in neural_network:
+#     print(l)
 
 
-    # print("_______________________")
-    # print("Reversed")
-    for index, layer in enumerate(reversed(neural_network)):
-        if(index == 0):
-            update_output_layer(layer,err)
-            layer.get_next().clear_cache()
-            # print(layer)
-        else:
-            update_hidden_layer(layer)
-            layer.get_next().clear_cache()
-            # print(layer)
-    input_layer.get_next().clear_cache()
+
+# print("===========================")
+
+# global_error = 100
+# err = 1000.0
+
+# epoch = 0
+# while (err != 0.0 or epoch < 2000):
+#     # input_layer.forward(pass_forward)
+#     # print(float(err))
+#     i, o = pick_one_at_random(d.inputs, d.outputs)
+#     # for i, o in zip(d.inputs, d.outputs):
+#     # print(i)
+#     # print(o)
+#     for layer in neural_network:
+#         layer.forward(run_neuron)
+
+#     # Get the results of the run
+#     result = out.get_inputs()[0]
+#     # Calculate the error
+#     err = o - result
+
+#     print("Expected: %s, Outpu: %s , Error: %s" % (str(o), str(result), str(err)))
+
+#     # for l in neural_network:
+#     #     print(l)
 
 
-    if(err < global_error):
-        if round(learning_rate,1) > 0.2:
-            learning_rate -= 0.01
-            learning_rate = round(learning_rate, 3)
-        global_error = err
+#     # print("_______________________")
+#     # print("Reversed")
+#     for index, layer in enumerate(reversed(neural_network)):
+#         if(index == 0):
+#             update_output_layer(layer,err)
+#             layer.get_next().clear_cache()
+#             # print(layer)
+#         else:
+#             update_hidden_layer(layer)
+#             layer.get_next().clear_cache()
+#             # print(layer)
+#     input_layer.get_next().clear_cache()
 
-    if err == 0.0:
-        epoch += 1
 
-    error_list.append(err) 
-    global_error_list.append(global_error)
+#     if(err < global_error):
+#         if round(learning_rate,1) > 0.2:
+#             learning_rate -= 0.01
+#             learning_rate = round(learning_rate, 3)
+#         global_error = err
 
-    if len(error_list) > 20:
-        error_list.pop(0)
+#     if err == 0.0:
+#         epoch += 1
 
-    if len(global_error_list) > 20:
-        global_error_list.pop(0)
-    error_graph.clear()
-    error_graph.plot(error_list)
-    error_graph.plot(global_error_list)
-    error_graph.set_ylim([-10,10])
+#     error_list.append(err) 
+#     global_error_list.append(global_error)
 
-    plt.draw()
-    plt.pause(0.01)
+#     if len(error_list) > 20:
+#         error_list.pop(0)
 
-for l in neural_network:
-    print(l)
+#     if len(global_error_list) > 20:
+#         global_error_list.pop(0)
+#     error_graph.clear()
+#     error_graph.plot(error_list)
+#     error_graph.plot(global_error_list)
+#     error_graph.set_ylim([-10,10])
+
+#     plt.draw()
+#     plt.pause(0.01)
+
+# for l in neural_network:
+#     print(l)
 
