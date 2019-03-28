@@ -1,5 +1,7 @@
 import csv
+import logging
 
+logging.basicConfig(level=logging.INFO)
 
 
 class Data:
@@ -30,23 +32,23 @@ def parse_row_to_float(row):
 
 
 def read_file(path):
-    print("Starting file inport at path: " + path)
+    logging.info('Starting file import at path: %s' , path)
     with open(path, newline='') as csvfile:
      data_reader = csv.reader(csvfile, delimiter=',', quotechar='"')
      
-     print("Getting labels")
+     logging.info('Getting labels')
      labels = process_first_row(data_reader)
      inputs = []
      outputs = []
 
-     print("Processing rows")
+     logging.info('Processing rows')
      for row in data_reader:
          output = float(row.pop())
          input_row = parse_row_to_float(row)
-         add_bias(input_row)
+        #  add_bias(input_row)
          inputs.append(input_row)
          outputs.append(output)
      result = Data(inputs, outputs, labels)
     
-    print("Done!")
+    logging.info('Done')
     return result

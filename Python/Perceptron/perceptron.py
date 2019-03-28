@@ -1,9 +1,19 @@
 import math
 
 class Perceptron:
-    def __init__(self, activation, weights =[0,0,0]):
+    def __init__(self, activation, weights =[0,0,0], id = 0):
         self.weights = weights 
         self.activation = activation
+        self.id = id
+
+    def __str__(self):
+        return str(self.weights)
+    
+    def __repr__(self):
+        return str(self.id) + " -> |" + str(self.weights) + "|"
+
+    def get_id(self):
+        return self.id
 
     def get_weights(self):
         return self.weights
@@ -17,6 +27,9 @@ class Perceptron:
     
     def setWeights(self, new_weights):
         self.weights = new_weights
+    
+    def set_weights(self, new_weights):
+        self.weights = new_weights
 
     def run(self, input):
         s = self.sum(input)
@@ -25,9 +38,7 @@ class Perceptron:
 
     def sum(self, input):
         s = 0
-        #print(s)
         for i, w in zip(input, self.weights):
-            # print (str(i) + " * " + str(w))
             s = s + (i * w)
         return s 
 
@@ -57,13 +68,13 @@ def x_simple(x):
     else:
         return -1
 
-w = [0,0,0]
-inp = [0,0,1]
+# w = [0,0,0]
+# inp = [0,0,1]
 
-p1 = Perceptron(simple)
-p1.setWeights(w)
-r = p1.run(inp)
-print(r)
+# p1 = Perceptron(simple)
+# p1.setWeights(w)
+# r = p1.run(inp)
+# print(r)
 
 
 
