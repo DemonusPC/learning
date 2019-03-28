@@ -1,4 +1,5 @@
 import perceptron
+from functions import sigmoid, sigmoidDerivative
 import data_importer
 import sys
 from random import randint
@@ -237,8 +238,8 @@ def produce_points(gradient, bias):
     
     return first,second
 
-t = learning(data.inputs,data.outputs, perceptron.sigmoid, perceptron.sigmoidDerivative, pass_extended_ts)
-p2 = perceptron.Perceptron(perceptron.sigmoid, t)
+t = learning(data.inputs,data.outputs, sigmoid, sigmoidDerivative, pass_extended_ts)
+p2 = perceptron.Perceptron(sigmoid, t)
 check_accuracy(p2, data.inputs, data.outputs)
 
 print(p2.get_weights())
