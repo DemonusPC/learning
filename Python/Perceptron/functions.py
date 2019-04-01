@@ -22,3 +22,15 @@ def x_simple(x):
         return 1
     else:
         return -1
+
+
+def p_sigmoid(x):
+    if x >= 0:
+        z = math.exp(-x)
+        return (1 / (1 + z))
+    else:
+        z = math.exp(x)
+        return (z / (1 + z))
+
+def p_sigmoidDerivative(x):
+    return p_sigmoid(1-p_sigmoid(x))

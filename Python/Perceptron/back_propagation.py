@@ -1,6 +1,6 @@
 import perceptron
 import data_importer
-
+from functions import p_sigmoid, p_sigmoidDerivative
 from random import randint
 import matplotlib.pyplot as plt
 import numpy as np
@@ -125,7 +125,7 @@ def update_output_layer(layer, error):
     for node in layer.get_nodes():
         # print(layer.get_nodes().index(node))
         sk = calc_sk(node.get_weights(), layer.get_inputs())
-        delta = delta_output(error, perceptron.sigmoidDerivative, sk)
+        delta = delta_output(error, p_sigmoidDerivative, sk)
         layer.add_delta(delta)
         update_weights(node, learning_rate,layer.inputs, delta)
 
@@ -147,7 +147,7 @@ def update_hidden_layer(layer):
             v = n.get_weights()[index]
             weights_linked_to_current.append(v)
 
-        delta = delta_hidden(perceptron.sigmoidDerivative, sk, weights_linked_to_current, next_deltas)
+        delta = delta_hidden(p_sigmoidDerivative, sk, weights_linked_to_current, next_deltas)
         layer.add_delta(delta)
         update_weights(node, learning_rate, layer.inputs, delta)
 
@@ -160,20 +160,19 @@ d = read_in_data()
 input_set = d.inputs[0]
 output_set = d.outputs[0]
 
-
 # Create the input layer coluimn
 input_layer = Column(input_set)
 
 # Create the hidden layer columns
-p1 = perceptron.Perceptron(perceptron.sigmoid, weights=[0.4,0.3,0.9], id=4)
-p2 = perceptron.Perceptron(perceptron.sigmoid, weights=[0.8, -0.2, 0.5], id= 5)
+p1 = perceptron.Perceptron(p_sigmoid, weights=[0.4,0.3,0.9], id=4)
+p2 = perceptron.Perceptron(p_sigmoid, weights=[0.8, -0.2, 0.5], id= 5)
 # p1 = perceptron.Perceptron(perceptron.sigmoid, weights=[1,1,1], id=4)
 # p2 = perceptron.Perceptron(perceptron.sigmoid, weights=[0.2, -0.111, 0.32], id= 5)
 hidden_nodes = [p1,p2]
 hidden_layer = Column(hidden_nodes)
 
 # Create the output layer columns
-output_layer = Column([perceptron.Perceptron(perceptron.sigmoid, weights=[-0.3, 0.1, 0.8], id=7)])
+output_layer = Column([perceptron.Perceptron(p_sigmoid, weights=[-0.3, 0.1, 0.8], id=7)])
 
 # Create the output (not layer)
 out = Column([])
