@@ -33,4 +33,4 @@ def p_sigmoid(x):
         return (z / (1 + z))
 
 def p_sigmoidDerivative(x):
-    return p_sigmoid(1-p_sigmoid(x))
+    return p_sigmoid(x) * (1-p_sigmoid(x))

@@ -16,6 +16,7 @@ def calc_sk(weights, inputs):
     return result
 
 def delta_output(error, derivative, sk):
+    
     delta = error * derivative(sk)
     return delta
 
@@ -205,123 +206,126 @@ print("Expected: %s, Outpu: %s , Error: %s" % (str(output_set), str(result), str
 
 # print("_______________________")
 # print("Reversed")
-for index, layer in enumerate(reversed(neural_network)):
-    if(index == 0):
-        update_output_layer(layer,error)
-        print(layer)
-    else:
-        update_hidden_layer(layer)
-        print(layer)
+# for index, layer in enumerate(reversed(neural_network)):
+#     if(index == 0):
+#         update_output_layer(layer,error)
+#         print(layer)
+#     else:
+#         update_hidden_layer(layer)
+#         print(layer)
 
 
 # input_functions
 # Generate an input and output pairs 
 
 
-# plot_data_x = []
-# plot_data_y = []
+plot_data_x = []
+plot_data_y = []
 
-# for point in d.inputs:
-#     plot_data_x.append(point[0])
-#     plot_data_y.append(point[1])
+for point in d.inputs:
+    plot_data_x.append(point[0])
+    plot_data_y.append(point[1])
 
-# fig = plt.figure(figsize=(7,10))
-# # learning_graph = fig.add_subplot(211)
-# # learning_graph.set_title("Data and learning")
-# error_graph = fig.add_subplot(211)
-# error_graph.set_title("Global Error")
+fig = plt.figure(figsize=(7,10))
+# learning_graph = fig.add_subplot(211)
+# learning_graph.set_title("Data and learning")
+error_graph = fig.add_subplot(211)
+error_graph.set_title("Global Error")
 
-# error_list = [20]
-# global_error_list = [20]
-# error_graph.plot(error_list)
-# error_graph.plot(global_error_list)
+error_list = [20]
+global_error_list = [20]
+error_graph.plot(error_list)
+error_graph.plot(global_error_list)
 
-# error_graph.set_ylim([-10,10])
-# # learning_graph.axis([0.0, 10.0, 0.0, 10.0])
-
-
-# plt.ion()
-# plt.show()
-
-# def pick_one_at_random(inputs, outputs):
-#     index = randint(0, len(inputs)-1)
-#     input = [inputs[index]]
-#     output = [outputs[index]]
-#     return input,output[0]
+error_graph.set_ylim([-10,10])
+# learning_graph.axis([0.0, 10.0, 0.0, 10.0])
 
 
+plt.ion()
+plt.show()
 
-# for l in neural_network:
-#     print(l)
+def pick_one_at_random(inputs, outputs):
+    index = randint(0, len(inputs)-1)
+    input = [inputs[index]]
+    output = [outputs[index]]
+    return input,output[0]
 
 
 
-# print("===========================")
-
-# global_error = 100
-# err = 1000.0
-
-# epoch = 0
-# while (err != 0.0 or epoch < 2000):
-#     # input_layer.forward(pass_forward)
-#     # print(float(err))
-#     i, o = pick_one_at_random(d.inputs, d.outputs)
-#     # for i, o in zip(d.inputs, d.outputs):
-#     # print(i)
-#     # print(o)
-#     for layer in neural_network:
-#         layer.forward(run_neuron)
-
-#     # Get the results of the run
-#     result = out.get_inputs()[0]
-#     # Calculate the error
-#     err = o - result
-
-#     print("Expected: %s, Outpu: %s , Error: %s" % (str(o), str(result), str(err)))
-
-#     # for l in neural_network:
-#     #     print(l)
+for l in neural_network:
+    print(l)
 
 
-#     # print("_______________________")
-#     # print("Reversed")
-#     for index, layer in enumerate(reversed(neural_network)):
-#         if(index == 0):
-#             update_output_layer(layer,err)
-#             layer.get_next().clear_cache()
-#             # print(layer)
-#         else:
-#             update_hidden_layer(layer)
-#             layer.get_next().clear_cache()
-#             # print(layer)
-#     input_layer.get_next().clear_cache()
+
+print("===========================")
+
+global_error = 100
+err = 1000.0
+
+epoch = 0
+while (err != 0.0 or epoch < 2000):
+    print(epoch)
+    # input_layer.forward(pass_forward)
+    # print(float(err))
+    i, o = pick_one_at_random(d.inputs, d.outputs)
+    # for i, o in zip(d.inputs, d.outputs):
+    # print(i)
+    # print(o)
+    for layer in neural_network:
+        layer.forward(run_neuron)
+
+    # Get the results of the run
+    result = out.get_inputs()[0]
+    # Calculate the error
+    err = o - result
+
+    print("Expected: %s, Outpu: %s , Error: %s" % (str(o), str(result), str(err)))
+
+    # for l in neural_network:
+    #     print(l)
 
 
-#     if(err < global_error):
-#         if round(learning_rate,1) > 0.2:
-#             learning_rate -= 0.01
-#             learning_rate = round(learning_rate, 3)
-#         global_error = err
+    # print("_______________________")
+    # print("Reversed")
+    for index, layer in enumerate(reversed(neural_network)):
+        if(index == 0):
+            update_output_layer(layer,err)
+            layer.get_next().clear_cache()
+            # print(layer)
+        else:
+            update_hidden_layer(layer)
+            layer.get_next().clear_cache()
+            # print(layer)
+    input_layer.get_next().clear_cache()
 
-#     if err == 0.0:
-#         epoch += 1
 
-#     error_list.append(err) 
-#     global_error_list.append(global_error)
+    if(abs(err) < abs(global_error)):
+        if round(learning_rate,1) > 0.2:
+            learning_rate -= 0.035
+            learning_rate = round(learning_rate, 3)
+        global_error = err
 
-#     if len(error_list) > 20:
-#         error_list.pop(0)
+    print(learning_rate)
+    print(global_error)
 
-#     if len(global_error_list) > 20:
-#         global_error_list.pop(0)
-#     error_graph.clear()
-#     error_graph.plot(error_list)
-#     error_graph.plot(global_error_list)
-#     error_graph.set_ylim([-10,10])
+    epoch += 1
 
-#     plt.draw()
-#     plt.pause(0.01)
+    error_list.append(err) 
+    global_error_list.append(global_error)
 
-# for l in neural_network:
-#     print(l)
+    if len(error_list) > 20:
+        error_list.pop(0)
+
+    if len(global_error_list) > 20:
+        global_error_list.pop(0)
+    error_graph.clear()
+    error_graph.plot(error_list)
+    error_graph.plot(global_error_list)
+    error_graph.set_ylim([-10,10])
+
+    plt.draw()
+    plt.pause(0.01)
+
+for l in neural_network:
+    print(l)
 
