@@ -2,8 +2,6 @@ import perceptron
 import data_importer
 from functions import p_sigmoid, p_sigmoidDerivative
 from random import randint
-# import matplotlib.pyplot as plt
-# import numpy as np
 
 from reporter import Reporter
 
