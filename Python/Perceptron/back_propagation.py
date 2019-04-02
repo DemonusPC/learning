@@ -5,6 +5,8 @@ from random import randint
 import matplotlib.pyplot as plt
 import numpy as np
 
+from reporter import Reporter
+
 def read_in_data():
     data = data_importer.read_file("./data/xor.csv")
     return data
@@ -107,7 +109,7 @@ class Column:
 
     def clear_cache(self):
         self.deltas = []
-        self.inputs = []
+        # self.inputs = []
         
 
 # print("Reversed")
@@ -119,8 +121,6 @@ class Column:
 # sk = calc_sk(output_layer.get_nodes()[0].get_weights(), output_layer.get_inputs())
 # delta_o = delta_output(error, perceptron.sigmoidDerivative, sk)
 
-
-learning_rate = 2
 # deltaj = (yj - hj) * g'(Σk[ wk,j * ak ])
 def update_output_layer(layer, error):
     for node in layer.get_nodes():
@@ -134,6 +134,7 @@ def update_output_layer(layer, error):
 def update_hidden_layer(layer):
     for node in layer.get_nodes():
         index = layer.get_nodes().index(node)
+        print("index: " + str(index))
         sk = calc_sk(node.get_weights(), layer.get_inputs())
 
         # Get the neurons of the next node
@@ -219,30 +220,30 @@ print("Expected: %s, Outpu: %s , Error: %s" % (str(output_set), str(result), str
 # Generate an input and output pairs 
 
 
-plot_data_x = []
-plot_data_y = []
+# plot_data_x = []
+# plot_data_y = []
 
-for point in d.inputs:
-    plot_data_x.append(point[0])
-    plot_data_y.append(point[1])
+# for point in d.inputs:
+#     plot_data_x.append(point[0])
+#     plot_data_y.append(point[1])
 
-fig = plt.figure(figsize=(7,10))
-# learning_graph = fig.add_subplot(211)
-# learning_graph.set_title("Data and learning")
-error_graph = fig.add_subplot(211)
-error_graph.set_title("Global Error")
+# fig = plt.figure(figsize=(7,10))
+# # learning_graph = fig.add_subplot(211)
+# # learning_graph.set_title("Data and learning")
+# error_graph = fig.add_subplot(211)
+# error_graph.set_title("Global Error")
 
-error_list = [20]
-global_error_list = [20]
-error_graph.plot(error_list)
-error_graph.plot(global_error_list)
+# error_list = [20]
+# global_error_list = [20]
+# error_graph.plot(error_list)
+# error_graph.plot(global_error_list)
 
-error_graph.set_ylim([-10,10])
-# learning_graph.axis([0.0, 10.0, 0.0, 10.0])
+# error_graph.set_ylim([-10,10])
+# # learning_graph.axis([0.0, 10.0, 0.0, 10.0])
 
 
-plt.ion()
-plt.show()
+# plt.ion()
+# plt.show()
 
 def pick_one_at_random(inputs, outputs):
     index = randint(0, len(inputs)-1)
@@ -258,12 +259,15 @@ for l in neural_network:
 
 
 print("===========================")
-
+learning_rate = 2
 global_error = 100
 err = 1000.0
 
+report = Reporter('./data/xor.csv')
+report.run()
+
 epoch = 0
-while (err != 0.0 or epoch < 2000):
+while (err != 0.0 and epoch < 2000):
     print(epoch)
     # input_layer.forward(pass_forward)
     # print(float(err))
@@ -279,7 +283,7 @@ while (err != 0.0 or epoch < 2000):
     # Calculate the error
     err = o - result
 
-    print("Expected: %s, Outpu: %s , Error: %s" % (str(o), str(result), str(err)))
+    print("Expected: %s, Output: %s , Error: %s" % (str(o), str(result), str(err)))
 
     # for l in neural_network:
     #     print(l)
@@ -290,41 +294,48 @@ while (err != 0.0 or epoch < 2000):
     for index, layer in enumerate(reversed(neural_network)):
         if(index == 0):
             update_output_layer(layer,err)
-            layer.get_next().clear_cache()
+            # layer.get_next().clear_cache()
             # print(layer)
         else:
             update_hidden_layer(layer)
-            layer.get_next().clear_cache()
-            # print(layer)
-    input_layer.get_next().clear_cache()
+            # layer.get_next().clear_cache()
+            print(layer)
+    # input_layer.get_next().clear_cache()
 
 
     if(abs(err) < abs(global_error)):
-        if round(learning_rate,1) > 0.2:
-            learning_rate -= 0.035
-            learning_rate = round(learning_rate, 3)
+        if round(learning_rate,10) > 0.2:
+            learning_rate -= 0.2
+            learning_rate = round(learning_rate, 10)
         global_error = err
 
     print(learning_rate)
     print(global_error)
 
+    # clean the cache
+    for layer in neural_network:
+        layer.get_next().clear_cache()
+    input_layer.get_next().clear_cache()
+
     epoch += 1
 
-    error_list.append(err) 
-    global_error_list.append(global_error)
+    # error_list.append(err) 
+    # global_error_list.append(global_error)
 
-    if len(error_list) > 20:
-        error_list.pop(0)
+    # if len(error_list) > 20:
+    #     error_list.pop(0)
 
-    if len(global_error_list) > 20:
-        global_error_list.pop(0)
-    error_graph.clear()
-    error_graph.plot(error_list)
-    error_graph.plot(global_error_list)
-    error_graph.set_ylim([-10,10])
+    # if len(global_error_list) > 20:
+    #     global_error_list.pop(0)
+    # error_graph.clear()
+    # error_graph.plot(error_list)
+    # error_graph.plot(global_error_list)
+    # error_graph.set_ylim([-10,10])
 
-    plt.draw()
-    plt.pause(0.01)
+    report.add_error(epoch, err)
+    # plt.draw()
+    # plt.pause(0.01)
+    
 
 for l in neural_network:
     print(l)

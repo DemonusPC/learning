@@ -1,4 +1,5 @@
 import math
+    
 
 class Perceptron:
     def __init__(self, activation, weights =[0,0,0], id = 0):
