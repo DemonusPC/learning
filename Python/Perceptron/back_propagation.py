@@ -16,7 +16,6 @@ def calc_sk(weights, inputs):
     return result
 
 def delta_output(error, derivative, sk):
-    
     delta = error * derivative(sk)
     return delta
 
@@ -110,16 +109,15 @@ class Column:
         self.inputs = []
 
 # deltaj = (yj - hj) * g'(Σk[ wk,j * ak ])
-def update_output_layer(layer, error):
+def update_output_layer(layer, error, alpha):
     for node in layer.get_nodes():
-        # print(layer.get_nodes().index(node))
         sk = calc_sk(node.get_weights(), layer.get_inputs())
         delta = delta_output(error, p_sigmoidDerivative, sk)
         layer.add_delta(delta)
-        update_weights(node, learning_rate,layer.inputs, delta)
+        update_weights(node, alpha,layer.inputs, delta)
 
 # deltaj g'(Σk[ wk,j * ak ]) * Σi[ wj,i * deltai ]
-def update_hidden_layer(layer):
+def update_hidden_layer(layer, alpha):
     for node in layer.get_nodes():
         index = layer.get_nodes().index(node)
         print("index: " + str(index))
@@ -139,7 +137,7 @@ def update_hidden_layer(layer):
 
         delta = delta_hidden(p_sigmoidDerivative, sk, weights_linked_to_current, next_deltas)
         layer.add_delta(delta)
-        update_weights(node, learning_rate, layer.inputs, delta)
+        update_weights(node, alpha, layer.inputs, delta)
 
 
 
@@ -200,71 +198,71 @@ def pick_one_at_random(inputs, outputs):
 
 
 
-for l in neural_network:
-    print(l)
+# for l in neural_network:
+    # print(l)
 
 
+# No learning for the moment
+# print("===========================")
+# learning_rate = 2
+# global_error = 100
+# err = 1000.0
 
-print("===========================")
-learning_rate = 2
-global_error = 100
-err = 1000.0
+# report = Reporter('./data/xor.csv')
+# report.run()
 
-report = Reporter('./data/xor.csv')
-report.run()
+# epoch = 0
+# while (err != 0.0 and epoch < 2000):
+#     print(epoch)
+#     # input_layer.forward(pass_forward)
+#     i, o = pick_one_at_random(d.inputs, d.outputs)
+#     for layer in neural_network:
+#         layer.forward(run_neuron)
 
-epoch = 0
-while (err != 0.0 and epoch < 2000):
-    print(epoch)
-    # input_layer.forward(pass_forward)
-    i, o = pick_one_at_random(d.inputs, d.outputs)
-    for layer in neural_network:
-        layer.forward(run_neuron)
+#     # Get the results of the run
+#     result = out.get_inputs()[0]
+#     # Calculate the error
+#     err = o - result
 
-    # Get the results of the run
-    result = out.get_inputs()[0]
-    # Calculate the error
-    err = o - result
+#     print("Expected: %s, Output: %s , Error: %s" % (str(o), str(result), str(err)))
 
-    print("Expected: %s, Output: %s , Error: %s" % (str(o), str(result), str(err)))
-
-    # for l in neural_network:
-    #     print(l)
-
-
-    # print("_______________________")
-    # print("Reversed")
-    for index, layer in enumerate(reversed(neural_network)):
-        if(index == 0):
-            update_output_layer(layer,err)
-            # layer.get_next().clear_cache()
-            # print(layer)
-        else:
-            update_hidden_layer(layer)
-            # layer.get_next().clear_cache()
-            print(layer)
-    # input_layer.get_next().clear_cache()
+#     # for l in neural_network:
+#     #     print(l)
 
 
-    if(abs(err) < abs(global_error)):
-        if round(learning_rate,10) > 0.2:
-            learning_rate -= 0.2
-            learning_rate = round(learning_rate, 10)
-        global_error = err
+#     # print("_______________________")
+#     # print("Reversed")
+#     for index, layer in enumerate(reversed(neural_network)):
+#         if(index == 0):
+#             update_output_layer(layer,err)
+#             # layer.get_next().clear_cache()
+#             # print(layer)
+#         else:
+#             update_hidden_layer(layer)
+#             # layer.get_next().clear_cache()
+#             print(layer)
+#     # input_layer.get_next().clear_cache()
 
-    print(learning_rate)
-    print(global_error)
 
-    # clean the cache
-    for layer in neural_network:
-        layer.get_next().clear_cache()
-    input_layer.get_next().clear_cache()
+#     if(abs(err) < abs(global_error)):
+#         if round(learning_rate,10) > 0.2:
+#             learning_rate -= 0.2
+#             learning_rate = round(learning_rate, 10)
+#         global_error = err
 
-    epoch += 1
+#     print(learning_rate)
+#     print(global_error)
 
-    report.add_error(epoch, err)
+#     # clean the cache
+#     for layer in neural_network:
+#         layer.get_next().clear_cache()
+#     input_layer.get_next().clear_cache()
+
+#     epoch += 1
+
+#     report.add_error(epoch, err)
     
 
-for l in neural_network:
-    print(l)
+# for l in neural_network:
+#     print(l)
 
