@@ -2,8 +2,8 @@ import perceptron
 import data_importer
 from functions import p_sigmoid, p_sigmoidDerivative
 from random import randint
-import matplotlib.pyplot as plt
-import numpy as np
+# import matplotlib.pyplot as plt
+# import numpy as np
 
 from reporter import Reporter
 
@@ -109,17 +109,7 @@ class Column:
 
     def clear_cache(self):
         self.deltas = []
-        # self.inputs = []
-        
-
-# print("Reversed")
-# for layer in reversed(neural_network):
-#     print(layer)
-
-
-# print(output_layer)
-# sk = calc_sk(output_layer.get_nodes()[0].get_weights(), output_layer.get_inputs())
-# delta_o = delta_output(error, perceptron.sigmoidDerivative, sk)
+        self.inputs = []
 
 # deltaj = (yj - hj) * g'(Σk[ wk,j * ak ])
 def update_output_layer(layer, error):
@@ -201,50 +191,9 @@ error = output_set - result
 
 print("Expected: %s, Outpu: %s , Error: %s" % (str(output_set), str(result), str(error)))
 
-# for l in neural_network:
-#     print(l)
-
-
-# print("_______________________")
-# print("Reversed")
-# for index, layer in enumerate(reversed(neural_network)):
-#     if(index == 0):
-#         update_output_layer(layer,error)
-#         print(layer)
-#     else:
-#         update_hidden_layer(layer)
-#         print(layer)
-
 
 # input_functions
 # Generate an input and output pairs 
-
-
-# plot_data_x = []
-# plot_data_y = []
-
-# for point in d.inputs:
-#     plot_data_x.append(point[0])
-#     plot_data_y.append(point[1])
-
-# fig = plt.figure(figsize=(7,10))
-# # learning_graph = fig.add_subplot(211)
-# # learning_graph.set_title("Data and learning")
-# error_graph = fig.add_subplot(211)
-# error_graph.set_title("Global Error")
-
-# error_list = [20]
-# global_error_list = [20]
-# error_graph.plot(error_list)
-# error_graph.plot(global_error_list)
-
-# error_graph.set_ylim([-10,10])
-# # learning_graph.axis([0.0, 10.0, 0.0, 10.0])
-
-
-# plt.ion()
-# plt.show()
-
 def pick_one_at_random(inputs, outputs):
     index = randint(0, len(inputs)-1)
     input = [inputs[index]]
@@ -270,11 +219,7 @@ epoch = 0
 while (err != 0.0 and epoch < 2000):
     print(epoch)
     # input_layer.forward(pass_forward)
-    # print(float(err))
     i, o = pick_one_at_random(d.inputs, d.outputs)
-    # for i, o in zip(d.inputs, d.outputs):
-    # print(i)
-    # print(o)
     for layer in neural_network:
         layer.forward(run_neuron)
 
@@ -319,22 +264,7 @@ while (err != 0.0 and epoch < 2000):
 
     epoch += 1
 
-    # error_list.append(err) 
-    # global_error_list.append(global_error)
-
-    # if len(error_list) > 20:
-    #     error_list.pop(0)
-
-    # if len(global_error_list) > 20:
-    #     global_error_list.pop(0)
-    # error_graph.clear()
-    # error_graph.plot(error_list)
-    # error_graph.plot(global_error_list)
-    # error_graph.set_ylim([-10,10])
-
     report.add_error(epoch, err)
-    # plt.draw()
-    # plt.pause(0.01)
     
 
 for l in neural_network:
