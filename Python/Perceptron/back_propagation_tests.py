@@ -44,6 +44,15 @@ class TestColumn(unittest.TestCase):
 
         self.assertEqual(expected_output, network_result)
         self.assertEqual(expected_error, error)
+
+    def test_back_propagation(self):
+        inputs = [0.0,0.0]
+        output = 0.0 
+        network = back_propagation.create_uni_nn()
+        network_result = back_propagation.run_neural_network(network, inputs)
+        error = output - network_result
+
+
         
 
 class TestUpdateLayers(unittest.TestCase):
@@ -76,8 +85,9 @@ class TestUpdateLayers(unittest.TestCase):
         back_propagation.hidden_layer_delta(hidden_layer)
 
         delta = hidden_layer.get_deltas()[0]
-        self.assertEqual(0.21321312, delta)
-
+        delta2 = hidden_layer.get_deltas()[1]
+        self.assertEqual(0.009127376073786164, delta)
+        self.assertEqual(-0.0034792604250258566, delta2)
 
 class TestEpochFunctions(unittest.TestCase):
     def test_create_epoch(self):

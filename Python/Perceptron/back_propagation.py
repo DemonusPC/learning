@@ -169,8 +169,6 @@ def hidden_layer_delta(layer):
             weights_linked_to_current.append(v)
 
         delta = delta_hidden(p_sigmoidDerivative, sk, weights_linked_to_current, next_deltas)
-        print("DELTA")
-        print(delta)
         layer.add_delta(delta)
 
 
@@ -218,8 +216,6 @@ def create_epoch(inputs, outputs, item_number):
     output_list = []
     for i in range(item_number):
         index = randint(0, len(inputs)-1)
-        # print(inputs[index])
-        # print(outputs[index])
         input_list.append([inputs[index]])
         output_list.append([outputs[index]])
     return input_list, output_list
@@ -235,8 +231,15 @@ def run_neural_network(network, input):
     return result
 
 # destructive
-def back_propagate(network, output):
-    return 0
+def back_propagate(network, error):
+
+    # the 2nd to last element is the neural output layer 
+    output_layer_delta(network[-2], error)
+    # then we iterate through the remaining layers
+    # layer 1 is the input layer so we ignore it
+    # we also ignore the output and neural output layer
+    for layer in reversed(network[1:-2]):
+        hidden_layer_delta(layer)
 
 def run_against_test_set(network, inputs, outputs):
     correct = 0
@@ -256,12 +259,13 @@ def run_against_test_set(network, inputs, outputs):
 
 
 
-print(input_set)
-print(output_set)
 neural_network = create_uni_nn()
 result = run_neural_network(neural_network, input_set)
 error = output_set - result
 Logger.log_run(output_set, result, error)
+
+back_propagate(neural_network, -0.6567763068)
+
 
 
 # No learning for the moment
