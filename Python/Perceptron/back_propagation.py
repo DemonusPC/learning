@@ -21,7 +21,7 @@ def delta_output(error, derivative, sk):
 
 def delta_hidden(derivative, sk, next_weights, next_deltas ):
     result = derivative(sk)
-    next_sum = [w * d for w,d in zip(next_weights, next_weights)]
+    next_sum = [w * d for w,d in zip(next_weights, next_deltas)]
     
     s = 0
     for ss in next_sum:
@@ -142,6 +142,36 @@ def update_hidden_layer(layer, alpha):
         layer.add_delta(delta)
         update_weights(node, alpha, layer.inputs, delta)
 
+
+# deltaj = (yj - hj) * g'(Σk[ wk,j * ak ])
+def output_layer_delta(layer, error):
+    for node in layer.get_nodes():
+        sk = calc_sk(node.get_weights(), layer.get_inputs())
+        delta = delta_output(error, p_sigmoidDerivative, sk)
+        layer.add_delta(delta)
+
+# deltaj g'(Σk[ wk,j * ak ]) * Σi[ wj,i * deltai ]
+def hidden_layer_delta(layer):
+    for node in layer.get_nodes():
+        index = layer.get_nodes().index(node)
+        sk = calc_sk(node.get_weights(), layer.get_inputs())
+
+        # Get the neurons of the next node
+        next_layer_nodes = layer.get_next().get_nodes()
+
+        # Get the delta values for the next node
+        next_deltas = layer.get_next().get_deltas()
+
+        weights_linked_to_current = []
+
+        for n in next_layer_nodes:
+            v = n.get_weights()[index]
+            weights_linked_to_current.append(v)
+
+        delta = delta_hidden(p_sigmoidDerivative, sk, weights_linked_to_current, next_deltas)
+        print("DELTA")
+        print(delta)
+        layer.add_delta(delta)
 
 
 print("Read in the xor data")
