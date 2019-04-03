@@ -241,6 +241,15 @@ def back_propagate(network, error):
     for layer in reversed(network[1:-2]):
         hidden_layer_delta(layer)
 
+# destructive
+def update_network_weights(network, alpha):
+    for layer in network[1:-1]:
+        for neuron, delta in zip(layer.get_nodes(), layer.get_deltas()):
+            update_weights(neuron, alpha,layer.inputs, delta)
+        layer.clear_cache()
+
+
+
 def run_against_test_set(network, inputs, outputs):
     correct = 0
 
@@ -266,6 +275,20 @@ Logger.log_run(output_set, result, error)
 
 back_propagate(neural_network, -0.6567763068)
 
+update_network_weights(neural_network, 2.0)
+
+for l in neural_network:
+    print(l)
+
+result = run_neural_network(neural_network, [0,1])
+error = 1 - result
+Logger.log_run(output_set, result, error)
+back_propagate(neural_network, error)
+update_network_weights(neural_network, 2.0)
+
+print("======!!=======")
+for l in neural_network:
+    print(l)
 
 
 # No learning for the moment
