@@ -3,7 +3,7 @@ import data_importer
 from functions import p_sigmoid, p_sigmoidDerivative
 from random import randint
 
-from reporter import Reporter
+from reporter import Reporter, Logger
 
 def read_in_data():
     data = data_importer.read_file("./data/xor.csv")
@@ -37,7 +37,7 @@ def pass_forward(node,input):
     return node
 
 def run_neuron(node, input):
-    if(isinstance(node,int)):
+    if(isinstance(node,int) or isinstance(node,float)):
         return node
     result = node.run(input)
     return result
@@ -72,6 +72,10 @@ class Column:
     # Sets the inuts from the previous column
     def set_inputs(self, inputs):
         self.inputs = inputs
+
+    def set_input_layer_inputs(self, input):
+        self.inputs = input
+        self.nodes = input
 
     # Sets the next column to follow
     def set_next(self, next):
@@ -120,7 +124,6 @@ def update_output_layer(layer, error, alpha):
 def update_hidden_layer(layer, alpha):
     for node in layer.get_nodes():
         index = layer.get_nodes().index(node)
-        print("index: " + str(index))
         sk = calc_sk(node.get_weights(), layer.get_inputs())
 
         # Get the neurons of the next node
@@ -148,45 +151,29 @@ d = read_in_data()
 input_set = d.inputs[0]
 output_set = d.outputs[0]
 
-# Create the input layer coluimn
-input_layer = Column(input_set)
+def create_uni_nn():
+    # Create the input layer coluimn
+    input_layer = Column([])
 
-# Create the hidden layer columns
-p1 = perceptron.Perceptron(p_sigmoid, weights=[0.4,0.3,0.9], id=4)
-p2 = perceptron.Perceptron(p_sigmoid, weights=[0.8, -0.2, 0.5], id= 5)
-# p1 = perceptron.Perceptron(perceptron.sigmoid, weights=[1,1,1], id=4)
-# p2 = perceptron.Perceptron(perceptron.sigmoid, weights=[0.2, -0.111, 0.32], id= 5)
-hidden_nodes = [p1,p2]
-hidden_layer = Column(hidden_nodes)
+    # Create the hidden layer columns
+    p1 = perceptron.Perceptron(p_sigmoid, weights=[0.4,0.3,0.9], id=4)
+    p2 = perceptron.Perceptron(p_sigmoid, weights=[0.8, -0.2, 0.5], id= 5)
+    hidden_nodes = [p1,p2]
+    hidden_layer = Column(hidden_nodes)
 
-# Create the output layer columns
-output_layer = Column([perceptron.Perceptron(p_sigmoid, weights=[-0.3, 0.1, 0.8], id=7)])
+    # Create the output layer columns
+    output_layer = Column([perceptron.Perceptron(p_sigmoid, weights=[-0.3, 0.1, 0.8], id=7)])
 
-# Create the output (not layer)
-out = Column([])
+    # Create the output (not layer)
+    out = Column([])
 
-# Add the links between the pages
-input_layer.set_next(hidden_layer)
-hidden_layer.set_next(output_layer)
-output_layer.set_next(out)
+    # Add the links between the pages
+    input_layer.set_next(hidden_layer)
+    hidden_layer.set_next(output_layer)
+    output_layer.set_next(out)
 
-# Set up the input layer, pass forward the values
-input_layer.forward(pass_forward)
-
-neural_network = [hidden_layer, output_layer]
-
-# Go forward in the neural network
-for layer in neural_network:
-    layer.forward(run_neuron)
-
-# Get the results of the run
-result = out.get_inputs()[0]
-
-# Calculate the error
-error = output_set - result
-
-print("Expected: %s, Outpu: %s , Error: %s" % (str(output_set), str(result), str(error)))
-
+    result = [input_layer, hidden_layer, output_layer, out]
+    return result
 
 # input_functions
 # Generate an input and output pairs 
@@ -196,10 +183,55 @@ def pick_one_at_random(inputs, outputs):
     output = [outputs[index]]
     return input,output[0]
 
+def create_epoch(inputs, outputs, item_number):
+    input_list = []
+    output_list = []
+    for i in range(item_number):
+        index = randint(0, len(inputs)-1)
+        # print(inputs[index])
+        # print(outputs[index])
+        input_list.append([inputs[index]])
+        output_list.append([outputs[index]])
+    return input_list, output_list
+
+# destructive
+def run_neural_network(network, input):
+    network[0].set_input_layer_inputs(input)
+    for layer in network[:-1]:
+        layer.forward(run_neuron)
+    
+    # get the result of the run
+    result = network[-1].get_inputs()[0]
+    return result
+
+# destructive
+def back_propagate(network, output):
+    return 0
+
+def run_against_test_set(network, inputs, outputs):
+    correct = 0
+
+    for i,o in zip(inputs, outputs):
+        result = run_neural_network(network, i)
+        if(o == result):
+            correct += 1
+            Logger.log_success(o, result)
+        else:
+            Logger.log_failure(o,result)
+
+    accuracy = (correct/len(inputs)) * 100
+    Logger.log_accuracy(accuracy)
+
+    return accuracy
 
 
-# for l in neural_network:
-    # print(l)
+
+print(input_set)
+print(output_set)
+neural_network = create_uni_nn()
+result = run_neural_network(neural_network, input_set)
+error = output_set - result
+Logger.log_run(output_set, result, error)
 
 
 # No learning for the moment

@@ -33,6 +33,19 @@ class TestColumn(unittest.TestCase):
         first_column.forward(back_propagation.pass_forward)
         self.assertEqual(second_column.get_inputs(), [4,2,3,1])
 
+    def test_sample_first_iteration(self):
+        expected_output = 0.6567763067768307
+        expected_error = -0.6567763067768307
+        inputs = [0.0,0.0]
+        output = 0.0 
+        network = back_propagation.create_uni_nn()
+        network_result = back_propagation.run_neural_network(network, inputs)
+        error = output - network_result
+
+        self.assertEqual(expected_output, network_result)
+        self.assertEqual(expected_error, error)
+        
+
 class TestUpdateLayers(unittest.TestCase):
     def test_output_layer(self):
         expected = -0.1480512964
@@ -45,6 +58,18 @@ class TestUpdateLayers(unittest.TestCase):
         back_propagation.update_output_layer(output_layer, error, alpha)
         actual = round(output_layer.get_deltas()[0], 10)
         self.assertEqual(expected, actual)
+
+class TestEpochFunctions(unittest.TestCase):
+    def test_create_epoch(self):
+        inputs = [[0,0], [0,1], [1,0], [1,1]]
+        outputs = [0,1,1,0]
+
+        ii, oo = back_propagation.create_epoch(inputs,outputs, 2)
+
+        self.assertEqual(2, len(ii))
+        self.assertEqual(2, len(oo))
+
+
 
 if __name__ == '__main__':
     unittest.main()

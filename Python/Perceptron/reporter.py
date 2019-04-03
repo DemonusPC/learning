@@ -76,4 +76,27 @@ class Reporter:
     self.error_graph = sns.lineplot(x="epoch", y="error", data=self.error_data, ax=self.axes[0])
     plt.draw()
     plt.pause(0.001)
-    
+
+class Logger:
+  @staticmethod
+  def log_run(expected, output, error):
+    print("Expected: %s, Output: %s , Error: %s" % (str(expected), str(output), str(error)))
+
+  @staticmethod
+  def log_test_set(expected, result, correct):
+    if(expected == result):
+      print(str(result) + " = " + str(expected) + " - " + u'\u2713')
+    else: 
+      print(str(result) + " = " + str(expected) + " - x")
+
+  @staticmethod
+  def log_success(expected, result):
+    print(str(result) + " = " + str(expected) + " - " + u'\u2713')
+
+  @staticmethod
+  def log_failure(expected, result):
+    print(str(result) + " = " + str(expected) + " - x")
+
+  @staticmethod
+  def log_accuracy(accuracy):
+    print('Accuracy: ' + str(accuracy))
