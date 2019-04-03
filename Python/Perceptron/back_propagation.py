@@ -216,9 +216,12 @@ def create_epoch(inputs, outputs, item_number):
     output_list = []
     for i in range(item_number):
         index = randint(0, len(inputs)-1)
-        input_list.append([inputs[index]])
-        output_list.append([outputs[index]])
+        input_list.append(inputs[index])
+        output_list.append(outputs[index])
     return input_list, output_list
+
+def create_xor_epoch(inputs, outputs):
+    return inputs,outputs
 
 # destructive
 def run_neural_network(network, input):
@@ -248,13 +251,16 @@ def update_network_weights(network, alpha):
             update_weights(neuron, alpha,layer.inputs, delta)
         layer.clear_cache()
 
+    network[0].clear_cache()
+    network[-1].clear_cache()
+
 
 
 def run_against_test_set(network, inputs, outputs):
     correct = 0
 
     for i,o in zip(inputs, outputs):
-        result = run_neural_network(network, i)
+        result = round(run_neural_network(network, i), 1)
         if(o == result):
             correct += 1
             Logger.log_success(o, result)
@@ -268,27 +274,65 @@ def run_against_test_set(network, inputs, outputs):
 
 
 
-neural_network = create_uni_nn()
-result = run_neural_network(neural_network, input_set)
-error = output_set - result
-Logger.log_run(output_set, result, error)
+# neural_network = create_uni_nn()
+# result = run_neural_network(neural_network, input_set)
+# error = output_set - result
+# Logger.log_run(output_set, result, error)
 
-back_propagate(neural_network, -0.6567763068)
+# back_propagate(neural_network, -0.6567763068)
 
-update_network_weights(neural_network, 2.0)
+# update_network_weights(neural_network, 2.0)
 
-for l in neural_network:
+# for l in neural_network:
+#     print(l)
+
+# result = run_neural_network(neural_network, [0,1])
+# error = 1 - result
+# Logger.log_run(output_set, result, error)
+# back_propagate(neural_network, error)
+# update_network_weights(neural_network, 2.0)
+
+# print("======!!=======")
+# for l in neural_network:
+#     print(l)
+
+def learn(learning_rate, inputs, outputs, reporter):
+    # parameter setup
+    err = 100
+    epoch = 0
+    reporter.run()
+
+    # network setup
+
+    network = create_uni_nn()
+
+    while (round(err,2) != 0.00 and epoch < 2000):
+        # epoch_inputs, epoch_outputs = create_epoch(inputs, outputs, 4)
+        epoch_inputs, epoch_outputs = create_xor_epoch(inputs, outputs)
+        for input, output in zip(epoch_inputs, epoch_outputs):
+            result = run_neural_network(network, input)
+
+            err = output - result
+            Logger.log_run(output, result, err)
+            back_propagate(network, err)
+            update_network_weights(network, learning_rate)        
+        
+        epoch += 1
+        Logger.log_epoch(epoch)
+        print(err)
+        reporter.add_error(epoch, err)
+
+    return network
+
+
+report = Reporter('./data/xor.csv')
+nn = learn(10, d.inputs, d.outputs, report)
+
+run_against_test_set(nn, d.inputs, d.outputs)
+
+for l in nn:
     print(l)
 
-result = run_neural_network(neural_network, [0,1])
-error = 1 - result
-Logger.log_run(output_set, result, error)
-back_propagate(neural_network, error)
-update_network_weights(neural_network, 2.0)
-
-print("======!!=======")
-for l in neural_network:
-    print(l)
 
 
 # No learning for the moment

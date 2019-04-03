@@ -100,3 +100,7 @@ class Logger:
   @staticmethod
   def log_accuracy(accuracy):
     print('Accuracy: ' + str(accuracy))
+
+  @staticmethod
+  def log_epoch(epoch):
+    print("Epoch: " + str(epoch))
