@@ -273,29 +273,6 @@ def run_against_test_set(network, inputs, outputs):
     return accuracy
 
 
-
-# neural_network = create_uni_nn()
-# result = run_neural_network(neural_network, input_set)
-# error = output_set - result
-# Logger.log_run(output_set, result, error)
-
-# back_propagate(neural_network, -0.6567763068)
-
-# update_network_weights(neural_network, 2.0)
-
-# for l in neural_network:
-#     print(l)
-
-# result = run_neural_network(neural_network, [0,1])
-# error = 1 - result
-# Logger.log_run(output_set, result, error)
-# back_propagate(neural_network, error)
-# update_network_weights(neural_network, 2.0)
-
-# print("======!!=======")
-# for l in neural_network:
-#     print(l)
-
 def learn(learning_rate, inputs, outputs, reporter):
     # parameter setup
     err = 100
@@ -306,8 +283,7 @@ def learn(learning_rate, inputs, outputs, reporter):
 
     network = create_uni_nn()
 
-    while (round(err,2) != 0.00 and epoch < 2000):
-        # epoch_inputs, epoch_outputs = create_epoch(inputs, outputs, 4)
+    while (round(abs(err),4) > 0.01 and epoch < 2000):
         epoch_inputs, epoch_outputs = create_xor_epoch(inputs, outputs)
         for input, output in zip(epoch_inputs, epoch_outputs):
             result = run_neural_network(network, input)
@@ -326,76 +302,8 @@ def learn(learning_rate, inputs, outputs, reporter):
 
 
 report = Reporter('./data/xor.csv')
-nn = learn(10, d.inputs, d.outputs, report)
+nn = learn(3, d.inputs, d.outputs, report)
 
 run_against_test_set(nn, d.inputs, d.outputs)
 
-for l in nn:
-    print(l)
-
-
-
-# No learning for the moment
-# print("===========================")
-# learning_rate = 2
-# global_error = 100
-# err = 1000.0
-
-# report = Reporter('./data/xor.csv')
-# report.run()
-
-# epoch = 0
-# while (err != 0.0 and epoch < 2000):
-#     print(epoch)
-#     # input_layer.forward(pass_forward)
-#     i, o = pick_one_at_random(d.inputs, d.outputs)
-#     for layer in neural_network:
-#         layer.forward(run_neuron)
-
-#     # Get the results of the run
-#     result = out.get_inputs()[0]
-#     # Calculate the error
-#     err = o - result
-
-#     print("Expected: %s, Output: %s , Error: %s" % (str(o), str(result), str(err)))
-
-#     # for l in neural_network:
-#     #     print(l)
-
-
-#     # print("_______________________")
-#     # print("Reversed")
-#     for index, layer in enumerate(reversed(neural_network)):
-#         if(index == 0):
-#             update_output_layer(layer,err)
-#             # layer.get_next().clear_cache()
-#             # print(layer)
-#         else:
-#             update_hidden_layer(layer)
-#             # layer.get_next().clear_cache()
-#             print(layer)
-#     # input_layer.get_next().clear_cache()
-
-
-#     if(abs(err) < abs(global_error)):
-#         if round(learning_rate,10) > 0.2:
-#             learning_rate -= 0.2
-#             learning_rate = round(learning_rate, 10)
-#         global_error = err
-
-#     print(learning_rate)
-#     print(global_error)
-
-#     # clean the cache
-#     for layer in neural_network:
-#         layer.get_next().clear_cache()
-#     input_layer.get_next().clear_cache()
-
-#     epoch += 1
-
-#     report.add_error(epoch, err)
-    
-
-# for l in neural_network:
-#     print(l)
 
